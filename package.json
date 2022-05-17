@@ -1,0 +1,19 @@
+{
+  "name": "project-github-repos",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "adm-zip": "^0.5.9",
+    "axios": "^0.27.2",
+    "inquirer": "^8.2.4",
+    "nanospinner": "^1.1.0",
+    "superagent": "^7.1.3"
+  }
+}
