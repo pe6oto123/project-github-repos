@@ -12,8 +12,10 @@
   "dependencies": {
     "adm-zip": "^0.5.9",
     "axios": "^0.27.2",
+    "fs-extra": "^10.1.0",
     "inquirer": "^8.2.4",
     "nanospinner": "^1.1.0",
+    "node-fetch": "^3.2.4",
     "superagent": "^7.1.3"
   }
 }
