@@ -3,7 +3,6 @@ import axios from 'axios'
 import inquirer from 'inquirer'
 import fetch from 'node-fetch'
 import fs from 'fs-extra'
-import superagent from 'superagent'
 import admZip from 'adm-zip'
 import { createSpinner } from 'nanospinner'
 
@@ -63,28 +62,29 @@ const handleDownloads = async (repo, dir_downloadFolder, index) => {
     donwloadSpinner.start()
 
     const writer = fs.createWriteStream(`${dir_downloadFolder}master${index}.zip`);
-  
+
     (await fetch(repo.html_url)).body.pipe(writer);
-  
+
     return new Promise((resolve, reject) => {
-     writer.on('finish', () => {
-  
+        writer.on('finish', () => {
+            donwloadSpinner.success({ text: successMessage })
 
-              donwloadSpinner.success({ text: successMessage })
+            var zip = new admZip(`${dir_downloadFolder}master${index}.zip`)
+            zip.extractAllTo(dir_downloadFolder)
+            try {
+                fs.unlinkSync(`${dir_downloadFolder}master${index}.zip`)
+            } catch (err) {
+                console.error(err)
+            }
 
-                var zip = new admZip(`${dir_downloadFolder}master${index}.zip`)
-                zip.extractAllTo(dir_downloadFolder)
-                try {
-                    fs.unlinkSync(`${dir_downloadFolder}master${index}.zip`)
-                } catch (err) {
-                    console.error(err)
-                }
-
-        resolve
-     });
-     writer.on('error', reject);
+            resolve
+        });
+        writer.on('error', () => {
+            donwloadSpinner.err({ text: errorMessage })
+            reject
+        })
     });
-    
+
 }
 
 const main = async () => {
@@ -96,7 +96,7 @@ const main = async () => {
 
     const repositories = await getRepos(searchParam)
 
-        const date = new Date(Date.now())
+    const date = new Date(Date.now())
 
     const folderDate =
         (`0${date.getDate()}`).slice(-2) + '.'
@@ -116,8 +116,6 @@ const main = async () => {
             html_url: `${repo.html_url}/archive/master.zip`
         }
     })
-
-    console.log(downloads)
 
     const promises = downloads.map(async (element, index) => await handleDownloads(element, dir_downloadFolder, index))
 
